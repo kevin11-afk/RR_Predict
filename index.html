@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Hidden Match-Winners | RR IPL 2027 Scouting Dashboard</title>
+<style>
+:root{--navy:#121d31;--pink:#dc236e;--pale:#fff0f6;--ink:#222b39;--muted:#697386;--bg:#f4f6fa;--line:#e4e8ef;--green:#16845f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(115deg,var(--navy) 0 68%,#a91c58 68%);color:white;padding:42px max(22px,calc((100vw - 1200px)/2)) 36px}
+.eyebrow{color:#ffc0d8;font-weight:800;letter-spacing:.14em;font-size:11px}.hero{display:flex;justify-content:space-between;gap:24px;align-items:end;flex-wrap:wrap}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:12px 0 12px;letter-spacing:-.04em}.sub{color:#e8edf5;max-width:720px;margin:0}
+.heroTag{border:1px solid #ffffff55;border-radius:14px;padding:12px 16px;font-weight:800;color:#fff}
+main{max-width:1200px;margin:26px auto;padding:0 20px 50px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.metric,.panel{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 18px #18263a08}
+.metric{padding:17px}.metric small{display:block;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.08em}.metric strong{font-size:28px;color:var(--navy);display:block;margin:3px 0}.metric span{color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:18px}
+.panel{padding:20px;margin-bottom:16px}.panel h2{margin:0 0 5px;color:var(--navy);font-size:20px}.desc{color:var(--muted);font-size:13px;margin:0 0 16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}.tab,button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 13px;font-weight:750;cursor:pointer;color:var(--navy)}
+.tab.active,button.primary{background:var(--pink);color:white;border-color:var(--pink)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.controls input,.controls select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;min-width:190px;background:white}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;background:var(--navy);color:#fff;padding:11px 9px;white-space:nowrap}td{padding:10px 9px;border-bottom:1px solid var(--line)}tr:nth-child(even) td{background:#fafbfc}td:first-child{font-weight:800;color:var(--pink)}
+.tablewrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+.badge{display:inline-block;border-radius:100px;padding:3px 8px;font-size:10px;font-weight:800;background:#e9f7f1;color:var(--green)}
+.bars{display:grid;gap:12px}.barrow{display:grid;grid-template-columns:135px 1fr 42px;gap:10px;align-items:center;font-size:12px}.barbg{height:11px;background:#f0e7ec;border-radius:100px;overflow:hidden}.barfill{height:100%;background:var(--pink);border-radius:100px}
+.callout{background:var(--pale);border:1px solid #f8d4e3;border-radius:12px;padding:14px 16px;color:#5e2440;font-size:13px}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.method article{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:14px}.method b{display:block;color:var(--pink);font-size:12px;margin-bottom:5px}.method p{margin:0;font-size:13px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+@media(max-width:800px){.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.method{grid-template-columns:1fr}.barrow{grid-template-columns:105px 1fr 36px}}
+@media(max-width:420px){.metrics{grid-template-columns:1fr 1fr}.metric strong{font-size:22px}.panel{padding:14px}}
+</style></head>
+<body>
+<header><div class="hero"><div><div class="eyebrow">SUPERR SELECTOR · SEASON 2</div><h1>THE HIDDEN<br>MATCH-WINNERS</h1><p class="sub">A pressure-first scouting intelligence dashboard for Rajasthan Royals’ IPL 2027 auction. Buy the role, not the reputation.</p></div><div class="heroTag">RR SCOUTING INTELLIGENCE<br><span style="font-weight:500;color:#ffd7e6">IPL 2027 · DATA-LED SHORTLIST</span></div></div></header>
+<main>
+<section class="metrics" id="metrics"></section>
+<div class="grid">
+<section class="panel"><h2>Challenge rankings</h2><p class="desc">Top 10 pressure performers across all supplied T20 competitions. Search and switch between batting and bowling.</p>
+<div class="tabs"><button class="tab active" data-kind="bat">Top 10 batters</button><button class="tab" data-kind="bowl">Top 10 bowlers</button></div>
+<div class="controls"><input id="rankSearch" placeholder="Search player name…"><select id="rankSort"><option value="rank">Original rank</option><option value="score">Highest model score</option><option value="balls">Most pressure balls</option></select></div>
+<div class="tablewrap"><table id="rankTable"></table></div></section>
+<section class="panel"><h2>RR underdog watchlist</h2><p class="desc">IPL-only recruitment candidates. These are scouting leads, not confirmed 2027 auction entrants.</p>
+<div class="tabs"><button class="tab active" data-short="bat">Batting prospects</button><button class="tab" data-short="bowl">Bowling prospects</button></div>
+<div class="tablewrap"><table id="shortTable"></table></div>
+<div class="callout" style="margin-top:14px"><b>Decision principle:</b> a strong pressure signal is only the first filter. Validate role, fitness, availability, venue splits and price before recommending a bid.</div>
+</section></div>
+<div class="grid">
+<section class="panel"><h2>Pressure score comparison</h2><p class="desc">Model score out of 100 for the current shortlist.</p><div class="tabs"><button class="tab active" data-chart="bat">Batters</button><button class="tab" data-chart="bowl">Bowlers</button></div><div class="bars" id="scoreBars"></div></section>
+<section class="panel"><h2>How pressure is detected</h2><p class="desc">A delivery is tagged when at least one of these match-state conditions applies.</p><div class="method">
+<article><b>CHASE STRESS</b><p>Second innings, 5+ overs elapsed; required rate ≥ 9 and ≥ current rate + 2.5.</p></article>
+<article><b>WICKET STRESS</b><p>Five or more wickets lost after the first five overs.</p></article>
+<article><b>DEATH + COLLAPSE</b><p>Final five overs with four or more wickets already lost.</p></article></div>
+<p class="desc" style="margin-top:14px">Revised innings lengths are used where supplied. This is a transparent proxy, not a complete measure of match importance or psychological pressure.</p></section>
+</div>
+<section class="panel"><h2>Scoring methodology</h2><p class="desc">Percentile-based comparative indices. Pressure rates are shrunk toward each player’s overall baseline using a 100-ball prior.</p>
+<div class="method">
+<article><b>BATTER INDEX · 100</b><p>25% pressure strike rate · 20% pressure average · 20% strike-rate lift · 15% boundary frequency · 20% pressure-ball exposure.</p></article>
+<article><b>BOWLER INDEX · 100</b><p>25% pressure economy (lower is better) · 25% wicket rate · 15% dot-ball rate · 15% economy improvement · 20% pressure-ball exposure.</p></article>
+<article><b>ELIGIBILITY FILTER</b><p>At least 100 pressure balls, 8 pressure matches and 250 total legal balls for challenge rankings.</p></article>
+</div></section>
+<section class="panel"><h2>How RR should use this</h2><p class="desc">The challenge ranking and franchise recruitment shortlist answer different questions.</p>
+<div class="callout"><b>Challenge rankings:</b> all supplied T20 competitions, used for the top-10 batter and bowler entries.<br><br><b>RR recruitment:</b> IPL-only evidence, used to identify role-fit prospects and hidden value. Player availability, current contract status and fitness must be checked separately.</div></section>
+<footer>Built from the supplied challenge dataset analysis represented in RR_F.pptx. Model scores are scouting indices, not probabilities or guarantees.</footer>
+</main>
+<script>
+const DATA={"batRank": [["1", "Suryakumar Yadav", "92.2", "566", "35", "1040", "183.7", "45.2"], ["2", "David Miller", "89.0", "701", "54", "1199", "171.0", "38.7"], ["3", "Tristan Stubbs", "87.6", "585", "45", "1002", "171.3", "45.5"], ["4", "Rinku Singh", "85.7", "693", "64", "1180", "170.3", "32.8"], ["5", "Namboori Tilak Varma", "85.1", "744", "64", "1255", "168.7", "32.2"], ["6", "Naman Dhir", "84.9", "239", "25", "477", "199.6", "31.8"], ["7", "Marcus Stoinis", "84.4", "521", "49", "908", "174.3", "28.4"], ["8", "Jitesh Sharma", "83.7", "378", "38", "679", "179.6", "27.2"], ["9", "Rishabh Pant", "81.5", "232", "22", "440", "189.7", "27.5"], ["10", "Tim David", "80.6", "706", "70", "1278", "181.0", "32.8"]], "bowlRank": [["1", "Mohammad Nawaz", "89.2", "288", "23", "28", "5.81", "0.58"], ["2", "Varun Chakravarthy", "87.7", "810", "64", "61", "7.13", "0.45"], ["3", "Sufiyan Muqeem", "86.5", "261", "17", "22", "5.10", "0.51"], ["4", "Abrar Ahmed", "84.8", "308", "28", "24", "5.16", "0.47"], ["5", "Shaheen Afridi", "83.2", "297", "34", "30", "7.64", "0.61"], ["6", "Jamie Overton", "81.9", "234", "19", "21", "7.44", "0.54"], ["7", "Jasprit Bumrah", "81.9", "587", "60", "44", "6.95", "0.45"], ["8", "Kuldeep Yadav", "81.4", "649", "60", "51", "7.64", "0.47"], ["9", "Taskin Ahmed", "81.0", "343", "36", "31", "7.82", "0.54"], ["10", "Rashid Khan", "81.0", "1011", "86", "78", "7.47", "0.46"]], "batShort": [["Shashank Singh", "87.7", "376", "32", "656", "174.5", "41.0", "161.6", "HIGH"], ["Naman Dhir", "89.3", "178", "20", "344", "193.3", "28.7", "164.4", "MEDIUM"], ["Ashutosh Sharma", "81.6", "313", "25", "537", "171.6", "28.3", "168.8", "HIGH"], ["Sameer Rizvi", "85.6", "112", "9", "203", "181.2", "50.8", "144.7", "EMERGING"], ["Abdul Samad", "72.4", "364", "35", "556", "152.7", "22.2", "149.5", "HIGH"]], "bowlShort": [["Mohsin Khan", "71.6", "168", "21", "12", "8.75", "0.43", "35%", "MEDIUM"], ["Sakib Hussain", "68.2", "107", "10", "7", "8.58", "0.39", "32%", "EMERGING"], ["Umran Malik", "85.5", "113", "11", "11", "7.86", "0.58", "53%", "EMERGING"], ["Sai Kishore", "81.8", "131", "14", "14", "8.11", "0.64", "34%", "EMERGING"], ["Harshit Rana", "82.7", "187", "18", "16", "8.44", "0.51", "41%", "MEDIUM"]], "meta": {"iplMatches": 367, "iplDeliveries": 87673, "iplPressureDeliveries": 26161, "allMatches": 867, "allDeliveries": 200961, "eligibleBatters": 119, "eligibleBowlers": 162}};
+const $=s=>document.querySelector(s);
+const num=v=>Number(String(v).replace(/,/g,''))||0;
+const fmt=v=>Number(v).toLocaleString('en-IN');
+const metricItems=[
+['IPL MATCHES',DATA.meta.iplMatches,'IPL 2022–2026'],
+['IPL DELIVERIES',fmt(DATA.meta.iplDeliveries),'Supplied ball-by-ball rows'],
+['IPL PRESSURE BALLS',fmt(DATA.meta.iplPressureDeliveries),'Contextual pressure flags'],
+['ALL COMPETITION MATCHES',DATA.meta.allMatches,'All supplied T20 competitions']
+];
+$('#metrics').innerHTML=metricItems.map(x=>`<article class="metric"><small>${x[0]}</small><strong>${x[1]}</strong><span>${x[2]}</span></article>`).join('');
+let rankKind='bat',shortKind='bat',chartKind='bat';
+const rankHeaders={bat:['Rank','Batter','Score','Pressure balls','Matches','Runs','Pressure SR','Average'],bowl:['Rank','Bowler','Score','Pressure balls','Matches','Wickets','Economy','Wkts/over']};
+const shortHeaders={bat:['Player','Score','Pressure balls','Matches','Runs','SR','Average','Base SR','Confidence'],bowl:['Player','Score','Pressure balls','Matches','Wickets','Economy','Wkts/over','Dot %','Confidence']};
+function table(el,headers,rows){el.innerHTML='<thead><tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${i===0?`<b>${v}</b>`:v}</td>`).join('')+'</tr>').join('')+'</tbody>'}
+function renderRank(){let rows=(rankKind==='bat'?DATA.batRank:DATA.bowlRank).slice();const q=$('#rankSearch').value.toLowerCase();rows=rows.filter(r=>r[1].toLowerCase().includes(q));const sort=$('#rankSort').value;if(sort==='score')rows.sort((a,b)=>num(b[2])-num(a[2]));if(sort==='balls')rows.sort((a,b)=>num(b[3])-num(a[3]));if(sort==='rank')rows.sort((a,b)=>num(a[0])-num(b[0]));table($('#rankTable'),rankHeaders[rankKind],rows)}
+function renderShort(){const rows=shortKind==='bat'?DATA.batShort:DATA.bowlShort;table($('#shortTable'),shortHeaders[shortKind],rows)}
+function renderBars(){const rows=chartKind==='bat'?DATA.batShort:DATA.bowlShort;const sorted=rows.slice().sort((a,b)=>num(b[1])-num(a[1]));$('#scoreBars').innerHTML=sorted.map(r=>`<div class="barrow"><span>${r[0]}</span><div class="barbg"><div class="barfill" style="width:${Math.min(100,num(r[1]))}%"></div></div><b>${r[1]}</b></div>`).join('')}
+document.querySelectorAll('[data-kind]').forEach(b=>b.addEventListener('click',()=>{rankKind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.classList.toggle('active',x===b));renderRank()}));
+document.querySelectorAll('[data-short]').forEach(b=>b.addEventListener('click',()=>{shortKind=b.dataset.short;document.querySelectorAll('[data-short]').forEach(x=>x.classList.toggle('active',x===b));renderShort()}));
+document.querySelectorAll('[data-chart]').forEach(b=>b.addEventListener('click',()=>{chartKind=b.dataset.chart;document.querySelectorAll('[data-chart]').forEach(x=>x.classList.toggle('active',x===b));renderBars()}));
+$('#rankSearch').addEventListener('input',renderRank);$('#rankSort').addEventListener('change',renderRank);
+renderRank();renderShort();renderBars();
+</script></body></html>
