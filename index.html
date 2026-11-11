@@ -28,6 +28,32 @@ table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;back
 footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
 @media(max-width:800px){.metrics{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.method{grid-template-columns:1fr}.barrow{grid-template-columns:105px 1fr 36px}}
 @media(max-width:420px){.metrics{grid-template-columns:1fr 1fr}.metric strong{font-size:22px}.panel{padding:14px}}
+
+.player-controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.player-controls input,.player-controls select{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:#fff;min-width:190px}
+.player-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.player-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.player-card:hover{transform:translateY(-3px);box-shadow:0 10px 25px #18263a16}
+.player-photo{height:150px;background:linear-gradient(135deg,#f9d8e6,#e8edf5);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.player-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+.player-initials{font-size:35px;font-weight:900;color:var(--pink)}
+.player-card-body{padding:12px}
+.player-card-body strong{display:block;color:var(--navy);font-size:14px}
+.player-meta{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-top:7px;color:var(--muted);font-size:11px}
+.player-score{font-size:19px;font-weight:900;color:var(--pink)}
+.confidence{font-size:9px;letter-spacing:.05em;font-weight:900;border-radius:30px;padding:3px 7px;background:#e9f7f1;color:#147451}
+.confidence.medium{background:#fff5dc;color:#946200}.confidence.emerging{background:#fff0f6;color:#a91c58}
+.detail-layout{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
+.detail-photo{width:100%;height:245px;object-fit:cover;object-position:center 20%;border-radius:13px;background:#f4f6fa}
+.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.detail-stat{padding:11px;border:1px solid var(--line);border-radius:10px;background:#fafbfc}
+.detail-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:800}
+.detail-stat b{font-size:19px;color:var(--navy)}
+.detail-note{padding:12px;border-radius:10px;background:var(--pale);font-size:13px;margin-top:10px}
+.player-empty{padding:24px;text-align:center;color:var(--muted)}
+@media(max-width:900px){.player-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.detail-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.player-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.player-photo{height:125px}.detail-layout{grid-template-columns:1fr}.detail-photo{height:220px;max-width:240px}.detail-grid{grid-template-columns:repeat(2,1fr)}}
+
 </style></head>
 <body>
 <header><div class="hero"><div><div class="eyebrow">SUPERR SELECTOR · SEASON 2</div><h1>THE HIDDEN<br>MATCH-WINNERS</h1><p class="sub">A pressure-first scouting intelligence dashboard for Rajasthan Royals’ IPL 2027 auction. Buy the role, not the reputation.</p></div><div class="heroTag">RR SCOUTING INTELLIGENCE<br><span style="font-weight:500;color:#ffd7e6">IPL 2027 · DATA-LED SHORTLIST</span></div></div></header>
@@ -43,6 +69,22 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
 <div class="tablewrap"><table id="shortTable"></table></div>
 <div class="callout" style="margin-top:14px"><b>Decision principle:</b> a strong pressure signal is only the first filter. Validate role, fitness, availability, venue splits and price before recommending a bid.</div>
 </section></div>
+
+<section class="panel" id="playerExplorer">
+<h2>Individual player explorer</h2>
+<p class="desc">Select any shortlisted player to inspect their photo, pressure metrics, exposure confidence and scouting checks. Figures below come from the IPL-only shortlist in the report.</p>
+<div class="player-controls">
+<input id="playerSearch" placeholder="Search shortlisted players…">
+<select id="playerRole"><option value="All">All roles</option><option value="Batter">Batters</option><option value="Bowler">Bowlers</option></select>
+<select id="playerConfidence"><option value="All">All confidence levels</option><option value="HIGH">High exposure</option><option value="MEDIUM">Medium exposure</option><option value="EMERGING">Emerging sample</option></select>
+</div>
+<div class="player-grid" id="playerGrid"></div>
+<div style="height:16px"></div>
+<div class="panel" id="playerDetail" style="background:#fafbfc;margin:0">
+<div class="player-empty">Choose a player card above to open their scouting profile.</div>
+</div>
+</section>
+
 <div class="grid">
 <section class="panel"><h2>Pressure score comparison</h2><p class="desc">Model score out of 100 for the current shortlist.</p><div class="tabs"><button class="tab active" data-chart="bat">Batters</button><button class="tab" data-chart="bowl">Bowlers</button></div><div class="bars" id="scoreBars"></div></section>
 <section class="panel"><h2>How pressure is detected</h2><p class="desc">A delivery is tagged when at least one of these match-state conditions applies.</p><div class="method">
@@ -59,10 +101,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
 </div></section>
 <section class="panel"><h2>How RR should use this</h2><p class="desc">The challenge ranking and franchise recruitment shortlist answer different questions.</p>
 <div class="callout"><b>Challenge rankings:</b> all supplied T20 competitions, used for the top-10 batter and bowler entries.<br><br><b>RR recruitment:</b> IPL-only evidence, used to identify role-fit prospects and hidden value. Player availability, current contract status and fitness must be checked separately.</div></section>
-<footer>Built from the supplied challenge dataset analysis represented in RR_F.pptx. Model scores are scouting indices, not probabilities or guarantees.</footer>
+<footer>Built from the supplied challenge dataset analysis represented in RR_A.pptx. Model scores are scouting indices, not probabilities or guarantees.</footer>
 </main>
 <script>
 const DATA={"batRank": [["1", "Suryakumar Yadav", "92.2", "566", "35", "1040", "183.7", "45.2"], ["2", "David Miller", "89.0", "701", "54", "1199", "171.0", "38.7"], ["3", "Tristan Stubbs", "87.6", "585", "45", "1002", "171.3", "45.5"], ["4", "Rinku Singh", "85.7", "693", "64", "1180", "170.3", "32.8"], ["5", "Namboori Tilak Varma", "85.1", "744", "64", "1255", "168.7", "32.2"], ["6", "Naman Dhir", "84.9", "239", "25", "477", "199.6", "31.8"], ["7", "Marcus Stoinis", "84.4", "521", "49", "908", "174.3", "28.4"], ["8", "Jitesh Sharma", "83.7", "378", "38", "679", "179.6", "27.2"], ["9", "Rishabh Pant", "81.5", "232", "22", "440", "189.7", "27.5"], ["10", "Tim David", "80.6", "706", "70", "1278", "181.0", "32.8"]], "bowlRank": [["1", "Mohammad Nawaz", "89.2", "288", "23", "28", "5.81", "0.58"], ["2", "Varun Chakravarthy", "87.7", "810", "64", "61", "7.13", "0.45"], ["3", "Sufiyan Muqeem", "86.5", "261", "17", "22", "5.10", "0.51"], ["4", "Abrar Ahmed", "84.8", "308", "28", "24", "5.16", "0.47"], ["5", "Shaheen Afridi", "83.2", "297", "34", "30", "7.64", "0.61"], ["6", "Jamie Overton", "81.9", "234", "19", "21", "7.44", "0.54"], ["7", "Jasprit Bumrah", "81.9", "587", "60", "44", "6.95", "0.45"], ["8", "Kuldeep Yadav", "81.4", "649", "60", "51", "7.64", "0.47"], ["9", "Taskin Ahmed", "81.0", "343", "36", "31", "7.82", "0.54"], ["10", "Rashid Khan", "81.0", "1011", "86", "78", "7.47", "0.46"]], "batShort": [["Shashank Singh", "87.7", "376", "32", "656", "174.5", "41.0", "161.6", "HIGH"], ["Naman Dhir", "89.3", "178", "20", "344", "193.3", "28.7", "164.4", "MEDIUM"], ["Ashutosh Sharma", "81.6", "313", "25", "537", "171.6", "28.3", "168.8", "HIGH"], ["Sameer Rizvi", "85.6", "112", "9", "203", "181.2", "50.8", "144.7", "EMERGING"], ["Abdul Samad", "72.4", "364", "35", "556", "152.7", "22.2", "149.5", "HIGH"]], "bowlShort": [["Mohsin Khan", "71.6", "168", "21", "12", "8.75", "0.43", "35%", "MEDIUM"], ["Sakib Hussain", "68.2", "107", "10", "7", "8.58", "0.39", "32%", "EMERGING"], ["Umran Malik", "85.5", "113", "11", "11", "7.86", "0.58", "53%", "EMERGING"], ["Sai Kishore", "81.8", "131", "14", "14", "8.11", "0.64", "34%", "EMERGING"], ["Harshit Rana", "82.7", "187", "18", "16", "8.44", "0.51", "41%", "MEDIUM"]], "meta": {"iplMatches": 367, "iplDeliveries": 87673, "iplPressureDeliveries": 26161, "allMatches": 867, "allDeliveries": 200961, "eligibleBatters": 119, "eligibleBowlers": 162}};
+const PROFILES=[{"name": "Shashank Singh", "role": "Batter", "score": "87.7", "pressureBalls": "376", "matches": "32", "runs": "656", "sr": "174.5", "avg": "41.0", "baseSr": "161.6", "confidence": "HIGH", "img": "https://www.punjabkingsipl.in/static-assets/images/players/63520.png?v=6.36", "source": "https://www.punjabkingsipl.in/players/63520-shashank-singh-profile", "signal": "174.5 pressure strike rate vs 161.6 baseline; 656 runs from 376 pressure balls.", "risk": "Validate batting position, phase split and matchup sample before a bid."}, {"name": "Naman Dhir", "role": "Batter", "score": "89.3", "pressureBalls": "178", "matches": "20", "runs": "344", "sr": "193.3", "avg": "28.7", "baseSr": "164.4", "confidence": "MEDIUM", "img": "https://img1.hscicdn.com/image/upload/f_auto%2Ct_ds_square_w_640%2Cq_50/lsci/db/PICTURES/CMS/381300/381384.png", "source": "https://www.espncricinfo.com/cricketers/naman-dhir-1287032", "signal": "193.3 pressure strike rate vs 164.4 baseline; 344 runs from 178 pressure balls.", "risk": "Validate batting position, phase split and matchup sample before a bid."}, {"name": "Ashutosh Sharma", "role": "Batter", "score": "81.6", "pressureBalls": "313", "matches": "25", "runs": "537", "sr": "171.6", "avg": "28.3", "baseSr": "168.8", "confidence": "HIGH", "img": "https://documents.iplt20.com/ipl/IPLHeadshot2026/3109.png", "source": "https://www.iplt20.com/players/ashutosh-sharma/20703", "signal": "171.6 pressure strike rate vs 168.8 baseline; 537 runs from 313 pressure balls.", "risk": "Validate batting position, phase split and matchup sample before a bid."}, {"name": "Sameer Rizvi", "role": "Batter", "score": "85.6", "pressureBalls": "112", "matches": "9", "runs": "203", "sr": "181.2", "avg": "50.8", "baseSr": "144.7", "confidence": "EMERGING", "img": "https://miro.medium.com/v2/resize%3Afit%3A1024/1%2A4QXF9BXq-zZAbt-cvFAzjQ.png", "source": "https://medium.com/@cricketerfamilyinfo/sameer-rizvi-age-wiki-bio-family-career-net-worth-more-255ac209a1b0", "signal": "181.2 pressure strike rate vs 144.7 baseline; 203 runs from 112 pressure balls.", "risk": "Validate batting position, phase split and matchup sample before a bid."}, {"name": "Abdul Samad", "role": "Batter", "score": "72.4", "pressureBalls": "364", "matches": "35", "runs": "556", "sr": "152.7", "avg": "22.2", "baseSr": "149.5", "confidence": "HIGH", "img": "./abdul-samad.png", "source": "https://www.lucknowsupergiants.in/static-assets/images/players/71260.png?v=14.12", "signal": "152.7 pressure strike rate vs 149.5 baseline; 556 runs from 364 pressure balls.", "risk": "Validate batting position, phase split and matchup sample before a bid."}, {"name": "Mohsin Khan", "role": "Bowler", "score": "71.6", "pressureBalls": "168", "matches": "21", "wickets": "12", "economy": "8.75", "wicketsPerOver": "0.43", "dotPct": "35%", "confidence": "MEDIUM", "img": "https://www.lucknowsupergiants.in/static-assets/images/players/68182.png?v=5.8", "source": "https://www.lucknowsupergiants.in/team/mohsin-khan-68182-profile", "signal": "12 pressure wickets from 168 balls; economy 8.75, dot-ball rate 35%.", "risk": "Validate bowling phase, workload, fitness and opposition/venue splits."}, {"name": "Sakib Hussain", "role": "Bowler", "score": "68.2", "pressureBalls": "107", "matches": "10", "wickets": "7", "economy": "8.58", "wicketsPerOver": "0.39", "dotPct": "32%", "confidence": "EMERGING", "img": "https://assets.khelnow.com/news/uploads/2024/05/Sakib-Hussain-KKR-IPL-2024.jpg", "source": "https://khelnow.com/cricket/5-kkr-play-single-match-ipl-2024-won-title", "signal": "7 pressure wickets from 107 balls; economy 8.58, dot-ball rate 32%.", "risk": "Validate bowling phase, workload, fitness and opposition/venue splits."}, {"name": "Umran Malik", "role": "Bowler", "score": "85.5", "pressureBalls": "113", "matches": "11", "wickets": "11", "economy": "7.86", "wicketsPerOver": "0.58", "dotPct": "53%", "confidence": "EMERGING", "img": "https://hindustantimes.com/static-content/1y/cricket-logos/players/umran-malik.png", "source": "https://www.hindustantimes.com/cricket/players/umran-malik-82969/photos", "signal": "11 pressure wickets from 113 balls; economy 7.86, dot-ball rate 53%.", "risk": "Validate bowling phase, workload, fitness and opposition/venue splits."}, {"name": "Sai Kishore", "role": "Bowler", "score": "81.8", "pressureBalls": "131", "matches": "14", "wickets": "14", "economy": "8.11", "wicketsPerOver": "0.64", "dotPct": "34%", "confidence": "EMERGING", "img": "https://www.gujarattitansipl.com/static-assets/images/players/66438.png?v=5.91", "source": "https://www.gujarattitansipl.com/players/sai-kishore-66438-profile", "signal": "14 pressure wickets from 131 balls; economy 8.11, dot-ball rate 34%.", "risk": "Validate bowling phase, workload, fitness and opposition/venue splits."}, {"name": "Harshit Rana", "role": "Bowler", "score": "82.7", "pressureBalls": "187", "matches": "18", "wickets": "16", "economy": "8.44", "wicketsPerOver": "0.51", "dotPct": "41%", "confidence": "MEDIUM", "img": "https://miro.medium.com/v2/resize%3Afit%3A1024/1%2A26pf1Ur9O-7NFDII2WkENA.png", "source": "https://medium.com/@cricketerfamilyinfo/harshit-rana-ageharshit-rana-age-wiki-family-wife-career-stats-net-worth-more-b8fa02173901", "signal": "16 pressure wickets from 187 balls; economy 8.44, dot-ball rate 41%.", "risk": "Validate bowling phase, workload, fitness and opposition/venue splits."}];
 const $=s=>document.querySelector(s);
 const num=v=>Number(String(v).replace(/,/g,''))||0;
 const fmt=v=>Number(v).toLocaleString('en-IN');
@@ -84,5 +127,31 @@ document.querySelectorAll('[data-kind]').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('[data-short]').forEach(b=>b.addEventListener('click',()=>{shortKind=b.dataset.short;document.querySelectorAll('[data-short]').forEach(x=>x.classList.toggle('active',x===b));renderShort()}));
 document.querySelectorAll('[data-chart]').forEach(b=>b.addEventListener('click',()=>{chartKind=b.dataset.chart;document.querySelectorAll('[data-chart]').forEach(x=>x.classList.toggle('active',x===b));renderBars()}));
 $('#rankSearch').addEventListener('input',renderRank);$('#rankSort').addEventListener('change',renderRank);
-renderRank();renderShort();renderBars();
+
+function confClass(c){return c==='HIGH'?'':c==='MEDIUM'?'medium':'emerging'}
+function initials(n){return n.split(' ').map(x=>x[0]).slice(0,2).join('')}
+function renderPlayerGrid(){
+ const q=$('#playerSearch').value.toLowerCase(),role=$('#playerRole').value,cf=$('#playerConfidence').value;
+ const rows=PROFILES.filter(p=>(role==='All'||p.role===role)&&(cf==='All'||p.confidence===cf)&&p.name.toLowerCase().includes(q));
+ $('#playerGrid').innerHTML=rows.length?rows.map(p=>`<article class="player-card" data-player="${p.name.replace(/"/g,'&quot;')}">
+ <div class="player-photo"><img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=&quot;player-initials&quot;>${initials(p.name)}</span>'"></div>
+ <div class="player-card-body"><strong>${p.name}</strong><div class="player-meta"><span>${p.role}</span><span class="player-score">${p.score}</span></div><div class="player-meta"><span class="confidence ${confClass(p.confidence)}">${p.confidence}</span><span>${p.pressureBalls} pressure balls</span></div></div></article>`).join(''):'<div class="player-empty">No players match these filters.</div>';
+ document.querySelectorAll('[data-player]').forEach(card=>card.addEventListener('click',()=>renderPlayerDetail(card.dataset.player)));
+}
+function renderPlayerDetail(name){
+ const p=PROFILES.find(x=>x.name===name);if(!p)return;
+ const stats=p.role==='Batter'?
+ [['Model score',p.score+'/100'],['Pressure runs',p.runs],['Pressure strike rate',p.sr],['Pressure average',p.avg],['Pressure balls',p.pressureBalls],['Matches',p.matches],['Baseline SR',p.baseSr],['Exposure status',p.confidence]]:
+ [['Model score',p.score+'/100'],['Pressure wickets',p.wickets],['Pressure economy',p.economy],['Wickets / over',p.wicketsPerOver],['Pressure balls',p.pressureBalls],['Matches',p.matches],['Dot-ball rate',p.dotPct],['Exposure status',p.confidence]];
+ $('#playerDetail').innerHTML=`<div class="detail-layout">
+ <div><img class="detail-photo" src="${p.img}" alt="${p.name}" onerror="this.style.display='none'"><p style="font-size:11px;color:var(--muted);margin:7px 0">Photo: <a href="${p.source}" target="_blank" rel="noopener">source / player profile</a></p></div>
+ <div><div class="eyebrow" style="color:var(--pink)">${p.role.toUpperCase()} · IPL-ONLY SCOUTING PROFILE</div><h2 style="font-size:26px;margin:5px 0">${p.name}</h2><p class="desc">Pressure score <b>${p.score}/100</b> · <span class="confidence ${confClass(p.confidence)}">${p.confidence} EXPOSURE</span></p>
+ <div class="detail-grid">${stats.map(s=>`<div class="detail-stat"><small>${s[0]}</small><b>${s[1]}</b></div>`).join('')}</div>
+ <div class="detail-note"><b>What the data says:</b> ${p.signal}</div>
+ <div class="detail-note"><b>Before recommending a bid:</b> ${p.risk}</div>
+ </div></div>`;
+}
+['playerSearch','playerRole','playerConfidence'].forEach(id=>$('#'+id).addEventListener(id==='playerSearch'?'input':'change',renderPlayerGrid));
+
+renderRank();renderShort();renderBars();renderPlayerGrid();
 </script></body></html>
